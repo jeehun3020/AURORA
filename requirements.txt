@@ -1,0 +1,5 @@
+cdsapi
+requests
+pandas
+numpy
+matplotlib
