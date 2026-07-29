@@ -45,8 +45,9 @@ NAV_SEASON_MONTHS = ["07", "08", "09", "10"]
 def download_month(client, region_name, area, year, month):
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     target = os.path.join(OUTPUT_DIR, f"era5_{region_name}_{year}_{month}.nc")
-    if os.path.exists(target):
-        print(f"[skip] {target} 이미 존재함")
+    extract_dir = target[: -len(".nc")]
+    if os.path.exists(target) or os.path.isdir(extract_dir):
+        print(f"[skip] {region_name} {year}-{month} 이미 존재함")
         return
 
     request = {

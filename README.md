@@ -24,9 +24,23 @@
 ```
 
 자세한 배경과 논리는 [docs/](docs/) 폴더 참고:
+- **[04_analysis_findings.md](docs/04_analysis_findings.md) — 📊 분석 결과 핵심 발견 (먼저 읽을 것)**
 - [01_project_concerns_and_positioning.md](docs/01_project_concerns_and_positioning.md) — 심사 대응 우려사항 및 표현 원칙 (왜 "보험료 예측"이 아니라 "상대 위험지수"인지 등)
 - [02_differentiation_strategy.md](docs/02_differentiation_strategy.md) — POLARIS 대비 차별화 전략 (잔여위험, PRGI, AIS 행동검증, What-if 시뮬레이션)
 - [03_handoff_notes.md](docs/03_handoff_notes.md) — 데이터 소스 현황, 작업 진행상황, 다음 단계 전체 목록
+
+## 분석 결과 요약
+
+| # | 발견 | 근거 |
+|---|---|---|
+| 1 | **NSR의 병목은 동시베리아해** — 항행가능일 53일로 카라해(121일)의 44% | NSIDC 1979~2025, 전 해역 p<10⁻⁸ |
+| 2 | **해빙 감소로 통항량 증가를 설명 못함** — 2013→2015 해빙 −46%인데 통항 −75% | CHNL n=9, 전부 n.s. (검정력 낮음) |
+| 3 | **선박등급 실익은 중간 빙조건(30~70%)에 집중** — 개빙수역·밀집빙에선 무의미 | ERA5 4,920일, 비단조 관계 |
+| 4 | **출항연기 효과는 평균과 중앙값의 부호가 반대** — 꼬리위험 구조. 10월 연기는 +26% 손해 | ERA5 실측 what-if |
+
+최적 출항시점은 전 구간 9월 중순~하순. 출항일 선택만으로 위험이 **2.3배** 차이 난다.
+
+![위험지수](nsr_analysis/figures/C_risk_index.png)
 
 ## 심사 대응 — 반드시 지킬 표현 원칙
 
@@ -74,26 +88,43 @@ python nsr_analysis/05_era5_download.py --years 2015-2024  # 전체 다운로드
 
 ## 코드 구조 (`nsr_analysis/`)
 
-| 파일 | 상태 | 설명 |
-|---|---|---|
-| `01_transit_trend_analysis.py` | 🔲 TODO | NSR 통항 시계열 분석·시각화 |
-| `02_risk_score_prototype.py` | 🔲 TODO | P×S 잔여위험/할증계수 계산 스켈레톤 |
-| `03_weather_pipeline.py` | 🔲 TODO | 기상데이터 전처리·결측보간·파생변수 파이프라인 |
-| `04_eia_oil_price.py` | ✅ | EIA API 연동 (WTI/Brent) |
-| `05_era5_download.py` | ✅ | ERA5 다운로드 (NSR 4개 구간, 항행시즌 7~10월) |
+실행 순서대로 번호가 매겨져 있습니다. 04~05는 데이터 수집, 06~07은 전처리, 08~12는 분석입니다.
 
-TODO 항목 3개는 이전 작업 세션에서 작성되었으나 파일이 유실되어 재작성이 필요합니다. 자세한 내용은 [docs/03_handoff_notes.md §4](docs/03_handoff_notes.md#4-작성된-코드-전부-nsr_analysis-폴더)를 참고하세요.
+| 파일 | 설명 |
+|---|---|
+| `04_eia_oil_price.py` | EIA API 연동 (WTI/Brent) |
+| `05_era5_download.py` | ERA5 다운로드 (NSR 4개 구간, 항행시즌 7~10월) |
+| `06_nsidc_extract.py` | NSIDC 지역별 해빙 xlsx → tidy CSV |
+| `07_era5_aggregate.py` | ERA5 netCDF → 구간별 일별 기상 피처 |
+| `08_ice_trend_analysis.py` | 발견 1 — 항행가능일수 47년 추세 |
+| `09_decoupling_analysis.py` | 발견 2 — 해빙·통항 탈동조화 |
+| `10_risk_index.py` | 발견 3 — P×S 위험지수, PRGI, 가중치 민감도 |
+| `11_whatif_residual.py` | 발견 4 — 출항연기·쇄빙지원 what-if |
+| `12_figures.py` | 보고서용 figure 4종 |
+
+전체 파이프라인 재현:
+```bash
+python nsr_analysis/06_nsidc_extract.py
+python nsr_analysis/07_era5_aggregate.py
+python nsr_analysis/08_ice_trend_analysis.py
+python nsr_analysis/09_decoupling_analysis.py
+python nsr_analysis/10_risk_index.py
+python nsr_analysis/11_whatif_residual.py
+python nsr_analysis/12_figures.py
+```
+
+산출물은 `nsr_analysis/results/`(CSV)와 `nsr_analysis/figures/`(PNG)에 생성됩니다.
 
 ## 다음 단계
 
-1. `01_transit_trend_analysis.py`, `03_weather_pipeline.py` 재작성
-2. `02_risk_score_prototype.py`의 placeholder 가중치를 POLARIS RIO 공식표(IMO MSC.1/Circ.1519) 기반으로 교체
-3. PRGI용 구조기지·피난항 위치 데이터 수집
-4. NSR 통항 데이터 누락 연도(2014·2017·2019~2022) CHNL에서 재수집
+1. **CHNL에서 누락 연도(2014·2017·2019~2022) 통항 실적 재수집** — 발견 2의 검정력에 직결
+2. POLARIS RIO 공식표(IMO MSC.1/Circ.1519) 적용해 해빙 위험 임계값 교체
+3. PAME ASTD 승인 후 AIS 감속·대기·우회로 위험지수 검증 (AURORA 차별화의 핵심 축, 현재 공백)
+4. 구간 박스 → 실제 NSR 항로선 기준 재집계
 5. 발표자료(pptx) AURORA 버전으로 갱신
-6. 분석보고서 초안 작성
+6. 분석보고서 초안 작성 — 발견 1·3·4 중심, 발견 2는 한계와 함께
 
-전체 우선순위 목록은 [docs/03_handoff_notes.md §7](docs/03_handoff_notes.md#7-다음-단계-우선순위-순) 참고.
+방법론 한계 전체 목록은 [docs/04_analysis_findings.md](docs/04_analysis_findings.md#방법론-한계-보고서에-반드시-명시) 참고.
 
 ## 팀
 

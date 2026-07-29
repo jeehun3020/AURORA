@@ -6,6 +6,7 @@ __pycache__/
 
 # 대용량 원본 다운로드 데이터 — 스크립트로 재생성 (README 참고)
 nsr_analysis/era5_data/
+nsr_analysis/era5_data*.zip
 nsr_analysis/era5_download.log
 
 # 민감정보
