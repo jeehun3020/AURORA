@@ -12,3 +12,7 @@ nsr_analysis/era5_download.log
 # 민감정보
 .cdsapirc
 .env
+
+# R 세션 기록
+.Rhistory
+.RData

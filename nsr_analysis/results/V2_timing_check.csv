@@ -1,0 +1,5 @@
+region,risk_min_day,nsidc_ice_min_day,gap_days
+chukchi,09-21,09-17,4
+east_siberian,09-18,09-19,1
+kara,09-16,09-17,1
+laptev,09-23,09-18,5
