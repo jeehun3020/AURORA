@@ -28,6 +28,7 @@
 - [01_project_concerns_and_positioning.md](docs/01_project_concerns_and_positioning.md) — 심사 대응 우려사항 및 표현 원칙 (왜 "보험료 예측"이 아니라 "상대 위험지수"인지 등)
 - [02_differentiation_strategy.md](docs/02_differentiation_strategy.md) — POLARIS 대비 차별화 전략 (잔여위험, PRGI, AIS 행동검증, What-if 시뮬레이션)
 - [03_handoff_notes.md](docs/03_handoff_notes.md) — 데이터 소스 현황, 작업 진행상황, 다음 단계 전체 목록
+- **[05_kpdc_data_request.md](docs/05_kpdc_data_request.md) — ⏰ KPDC ARAON 데이터 신청 가이드 (마감 임박)**
 
 ## 분석 결과 요약
 
