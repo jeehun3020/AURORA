@@ -59,6 +59,25 @@ KPDC 데이터 이용 규정상 다음이 요구된다. 형식적 체크박스�
 - 지적재산권 등록 전 사전협의
 - **성과물 제출 및 추가 획득 데이터 등록·공개** — 대회 종료 후 보고서를 KPDC에 제출해야 함
 
+## 신청 현황
+
+**제출 완료** (2026-07-29). 접수 확인 메일 수신.
+
+> 확인된 사실: 승인 주체는 데이터센터가 아니라 **연구책임자(the researcher)**다.
+> "Your application is pending approval by the researcher and will be sent to you immediately upon approval."
+>
+> 즉 정책상 14일은 상한이고, 실제 소요는 PI 응답 속도에 달렸다. 1주일 내 회신이 없으면 아래로 직접 문의하는 편이 빠르다.
+
+| 역할 | 연락처 |
+|---|---|
+| PI (ARAON DaDiS 기상) | Dong Seob Shin — dsshin@kopri.re.kr |
+| 공동 | Su-hwan Kim — idsuhwan@kopri.re.kr |
+| 공동 | Hyung-gyu Choi — langyu7@kopri.re.kr |
+| 공동 | GoHeung Kim — ghkim@kopri.re.kr |
+| 데이터센터 | kpdc@kopri.re.kr |
+
+문의 시 대회 출품 일정(예선 8/14)을 명시하면 우선 처리를 기대할 수 있다. 신청 상태는 `My Page > Request List`에서 확인.
+
 ## 승인 후 분석 연결
 
 [`nsr_analysis/13_validation.py`](../nsr_analysis/13_validation.py)의 `validate_araon()`에 CSV 경로를 넘기면 된다.
@@ -67,12 +86,16 @@ KPDC 데이터 이용 규정상 다음이 요구된다. 형식적 체크박스�
 ARAON_CSV=nsr_analysis/kpdc_data/araon_arctic_2024.csv python nsr_analysis/13_validation.py
 ```
 
-⚠️ 현재 함수는 스켈레톤 상태다. 실제 파일 스키마 확인 후 두 가지 작업이 필요하다.
+ERA5 쪽 지점추출은 **완성·검증 완료**다. [`14_era5_track_extract.py`](../nsr_analysis/14_era5_track_extract.py)가 항적(시각·위경도)별 최근접 격자값을 뽑는다. 합성 항적 61점으로 자체검증한 결과 매칭률 100%, 격자 이격 최대 0.121도(ERA5 반격자 0.125도 이내), 물리범위 검사 통과.
 
-1. 컬럼명 매핑 (`datetime`, `latitude`, `longitude`, `wind_speed`, `air_temp`, `pressure`)
-2. ERA5 원본 netCDF에서 항적 좌표별 최근접 격자 추출 — `07_era5_aggregate.py`의 `xr.open_dataset`을 `sel(method="nearest")`로 재사용
+```bash
+python nsr_analysis/14_era5_track_extract.py --selftest              # 로직 검증
+python nsr_analysis/14_era5_track_extract.py --track araon.csv --out matched.csv
+```
 
-현재 `era5_daily_features.csv`는 구간 평균으로 축약돼 있어 지점 대조가 불가능하다.
+따라서 데이터 도착 후 남은 작업은 **컬럼명 매핑 하나뿐**이다 (`datetime`, `latitude`, `longitude`, `wind_speed`, `air_temp`, `pressure`).
+
+구현 시 주의: 추크치해 구간은 날짜변경선을 넘으므로 경도 표기 규약(-180~180 vs 0~360)을 반드시 정렬해야 한다. `_align_lon()`이 처리하지만, 진단 지표에서도 같은 정렬을 적용해야 한다 — 정렬 없이 뺀 이격거리는 360도로 나와 오정렬을 탐지하지 못한다.
 
 ## 검증 설계 (승인 전 미리 확정해둘 것)
 
