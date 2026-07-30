@@ -41,12 +41,17 @@
 
 ### 검증 현황
 
-| 검증 대상 | 상태 |
-|---|---|
-| 해빙 입력자료 vs 독립 위성관측(NSIDC) | ✅ r=0.91~0.95 |
-| 지수 최적시점 vs 독립 관측 최소빙일 | ✅ **평균 2.8일 차** |
-| 기상 입력자료 vs in-situ 관측 | ⬜ KPDC ARAON 신청 필요 |
-| 위험지수 vs 실제 선박 행동(AIS) | ⬜ PAME ASTD 승인 대기 |
+| 검증 대상 | 자료 | 상태 |
+|---|---|---|
+| 해빙 입력자료 | NSIDC 위성관측 | ✅ r=0.91~0.95 |
+| 지수 최적시점 | NSIDC 최소빙일 | ✅ 평균 2.8일 차 |
+| 기온 입력자료 | **KPDC ARAON 선상관측** | ✅ **중앙값오차 ±0.53°C, MAD 0.36~0.50°C** |
+| 풍속 입력자료 | **KPDC ARAON 선상관측** | ⚠️ 부분 (최량항차 r=0.855, 편의 +1~2 m/s) |
+| 위험지수 vs 선박 행동(AIS) | PAME ASTD | ⬜ 승인 대기 |
+
+**부산물**: ERA5 대조로 아라온 기압센서가 2023년부터 결함(전량 500.00 고정)임을 탐지. 검증은 양방향으로 작동한다.
+
+![ARAON 검증](nsr_analysis/figures/V3_araon_validation.png)
 
 ⚠️ 절대 수치(+26.3%, 2.3배 등)는 전부 잠정 가중치의 함수다. 발표 시 [견고/잠정/근거부족 3분류](docs/04_analysis_findings.md#이-결론-중-어디까지가-가중치와-무관한가-중요)를 지킬 것.
 
@@ -70,6 +75,7 @@
 | EIA 국제유가 (WTI/Brent, 2010~2025) | ✅ 완료 |
 | ERA5 기상/해양 (2015~2024, 카라해·랍테프해·동시베리아해·추크치해) | 🔄 다운로드 진행/완료 |
 | PAME ASTD (AIS, 13종 선종) | 🔄 신청 완료, 승인 대기 |
+| **KPDC ARAON 선상 기상관측 (6개 항차 2020~2025)** | ✅ 승인·확보 완료, 12,189시간 |
 | NSR 통항 실적 (CHNL) | ⚠️ 부분 재구성 — 2014·2017·2019~2022년 누락, 재수집 필요 |
 
 자세한 내용은 [docs/03_handoff_notes.md §3](docs/03_handoff_notes.md#3-데이터-소스-현황) 참고.
@@ -111,6 +117,11 @@ python nsr_analysis/05_era5_download.py --years 2015-2024  # 전체 다운로드
 | `10_risk_index.py` | 발견 3 — P×S 위험지수, PRGI, 가중치 민감도 |
 | `11_whatif_residual.py` | 발견 4 — 출항연기·쇄빙지원 what-if |
 | `12_figures.py` | 보고서용 figure 4종 |
+| `13_validation.py` | 검증1·2 — NSIDC 독립 대조 |
+| `14_era5_track_extract.py` | 항적별 ERA5 최근접 격자 추출 |
+| `15_araon_parse.py` | KPDC ARAON 1초 원자료 → 시간별 집계 (4계층 QC) |
+| `16_araon_era5_validation.py` | 검증3 — ARAON in-situ vs ERA5 |
+| `17_validation_figures.py` | 검증 figure |
 
 전체 파이프라인 재현:
 ```bash

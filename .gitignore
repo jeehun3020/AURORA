@@ -16,3 +16,8 @@ nsr_analysis/era5_download.log
 # R 세션 기록
 .Rhistory
 .RData
+
+# KPDC ARAON 원자료 (1초 간격 .dat, 약 4.8GB) — KPDC 신청·승인 후 개별 확보
+# 재배포 금지 조건이 있으므로 저장소에 올리지 않는다
+nsr_analysis/kpdc_data/
+ARAON_DADIS_WEATHER_ARCTIC_*/
