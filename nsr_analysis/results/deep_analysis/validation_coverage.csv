@@ -1,0 +1,11 @@
+cruise_year,era5_region,matched_rows,temperature_pairs,wind_pairs
+2020,chukchi,114,36,114
+2020,east_siberian,106,106,106
+2021,chukchi,247,247,247
+2021,east_siberian,429,429,429
+2022,chukchi,394,394,394
+2022,east_siberian,196,196,196
+2023,chukchi,320,320,320
+2023,east_siberian,239,239,239
+2024,chukchi,251,251,251
+2024,east_siberian,232,232,232

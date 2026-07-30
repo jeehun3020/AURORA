@@ -1,0 +1,2 @@
+scope,preferred_start,preferred_end,window_days,best_day_by_mean,best_corridor_mean_risk,criterion
+NSR 4구간 공통,09-13,09-17,5,09-15,0.2822257758010298,각 구간별 저위험 후보일의 교집합

@@ -21,3 +21,7 @@ nsr_analysis/era5_download.log
 # 재배포 금지 조건이 있으므로 저장소에 올리지 않는다
 nsr_analysis/kpdc_data/
 ARAON_DADIS_WEATHER_ARCTIC_*/
+ARAON_DADIS_WEATHER_ARCTIC_*.zip
+
+# 도구가 생성한 UUID 경로 산출물 — 재생성 가능
+outputs/

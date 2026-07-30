@@ -1,0 +1,266 @@
+{
+  "data_quality": {
+    "era5_complete_region_year_cells": 40,
+    "era5_total_region_year_cells": 40,
+    "araon_raw_dat_files": 12193,
+    "araon_hourly_rows": 12189,
+    "matched_rows": 2528,
+    "temperature_pairs": 2450,
+    "matched_cruises": 5,
+    "transit_missing_years": [
+      2014,
+      2017,
+      2019,
+      2020,
+      2021,
+      2022
+    ]
+  },
+  "top_variance_driver": "ice",
+  "top_variance_driver_share": 0.8174625643233598,
+  "late_delay": [
+    {
+      "month": 9,
+      "mean_relative_pct": 13.953270479381512,
+      "median_relative_pct": 0.5992256356216363,
+      "cluster_mean_ci_low": 9.964953645722161,
+      "cluster_mean_ci_high": 18.28853453842678,
+      "positive_cluster_share": 1.0,
+      "denominator_sensitive": false
+    },
+    {
+      "month": 10,
+      "mean_relative_pct": 16.05604922804027,
+      "median_relative_pct": 4.339673351655737,
+      "cluster_mean_ci_low": 11.962759309081381,
+      "cluster_mean_ci_high": 20.62707083752037,
+      "positive_cluster_share": 1.0,
+      "denominator_sensitive": false
+    }
+  ],
+  "wave_imputation_sensitivity": [
+    {
+      "scenario": "기준(전체 중앙값)",
+      "region": "ALL",
+      "region_kr": "전체",
+      "month": 9,
+      "missing_wave_days": 40,
+      "mean_relative_pct": 13.953270479381512,
+      "median_relative_pct": 0.5992256356216363,
+      "winsor_mean_pct": 10.697933788406282,
+      "cluster_ci_low": 10.006692126923086,
+      "cluster_ci_high": 18.33307241620777,
+      "positive_year_share": 1.0,
+      "direction": "증가"
+    },
+    {
+      "scenario": "기준(전체 중앙값)",
+      "region": "ALL",
+      "region_kr": "전체",
+      "month": 10,
+      "missing_wave_days": 40,
+      "mean_relative_pct": 16.05604922804027,
+      "median_relative_pct": 4.339673351655737,
+      "winsor_mean_pct": 12.972367053688123,
+      "cluster_ci_low": 12.09930777142329,
+      "cluster_ci_high": 20.72114623915746,
+      "positive_year_share": 1.0,
+      "direction": "증가"
+    },
+    {
+      "scenario": "결측=0m",
+      "region": "ALL",
+      "region_kr": "전체",
+      "month": 9,
+      "missing_wave_days": 40,
+      "mean_relative_pct": 13.953270479381501,
+      "median_relative_pct": 0.5992256356216474,
+      "winsor_mean_pct": 10.697933788406274,
+      "cluster_ci_low": 10.068760386695732,
+      "cluster_ci_high": 18.266877700637377,
+      "positive_year_share": 1.0,
+      "direction": "증가"
+    },
+    {
+      "scenario": "결측=0m",
+      "region": "ALL",
+      "region_kr": "전체",
+      "month": 10,
+      "missing_wave_days": 40,
+      "mean_relative_pct": 15.930125296823755,
+      "median_relative_pct": 4.311236958113341,
+      "winsor_mean_pct": 12.84644312247161,
+      "cluster_ci_low": 11.906255141444868,
+      "cluster_ci_high": 20.58733983810526,
+      "positive_year_share": 1.0,
+      "direction": "증가"
+    },
+    {
+      "scenario": "결측=구간×월 중앙값",
+      "region": "ALL",
+      "region_kr": "전체",
+      "month": 9,
+      "missing_wave_days": 40,
+      "mean_relative_pct": 13.953270479381501,
+      "median_relative_pct": 0.5992256356216474,
+      "winsor_mean_pct": 10.697933788406274,
+      "cluster_ci_low": 9.890416711139139,
+      "cluster_ci_high": 18.398570314992334,
+      "positive_year_share": 1.0,
+      "direction": "증가"
+    },
+    {
+      "scenario": "결측=구간×월 중앙값",
+      "region": "ALL",
+      "region_kr": "전체",
+      "month": 10,
+      "missing_wave_days": 40,
+      "mean_relative_pct": 16.09377947061105,
+      "median_relative_pct": 4.334237422259612,
+      "winsor_mean_pct": 13.010097296258904,
+      "cluster_ci_low": 12.105024647479855,
+      "cluster_ci_high": 20.738071241868372,
+      "positive_year_share": 1.0,
+      "direction": "증가"
+    }
+  ],
+  "preferred_windows": [
+    {
+      "region_kr": "추크치해",
+      "preferred_start": "09-05",
+      "preferred_end": "09-17",
+      "window_days": 13
+    },
+    {
+      "region_kr": "동시베리아해",
+      "preferred_start": "08-27",
+      "preferred_end": "09-26",
+      "window_days": 31
+    },
+    {
+      "region_kr": "카라해",
+      "preferred_start": "09-06",
+      "preferred_end": "09-20",
+      "window_days": 15
+    },
+    {
+      "region_kr": "랍테프해",
+      "preferred_start": "09-03",
+      "preferred_end": "09-09",
+      "window_days": 7
+    }
+  ],
+  "corridor_window": [
+    {
+      "scope": "NSR 4구간 공통",
+      "preferred_start": "09-13",
+      "preferred_end": "09-17",
+      "window_days": 5,
+      "best_day_by_mean": "09-15",
+      "best_corridor_mean_risk": 0.2822257758010298,
+      "criterion": "각 구간별 저위험 후보일의 교집합"
+    }
+  ],
+  "forecast_value": [
+    {
+      "horizon": 3,
+      "n_decisions": 1440,
+      "always_now_risk": 0.4887280580856257,
+      "model_rule_risk": 0.4679770457713267,
+      "climate_rule_risk": 0.4862552750946367,
+      "oracle_risk": 0.45095927184349033,
+      "model_improvement_pct": 0.04245922035984967,
+      "climate_improvement_pct": 0.005059629685831922,
+      "oracle_improvement_pct": 0.07727975837949176,
+      "oracle_capture_pct": 0.5494222711120349,
+      "direction_accuracy": 0.7069444444444445,
+      "mean_regret": 0.017017773927836273,
+      "delay_choice_rate": 0.46597222222222223,
+      "cluster_ci_low": 0.03880068182618665,
+      "cluster_ci_high": 0.04655327382440997,
+      "year_min_improvement_pct": 0.03880068182618665,
+      "year_max_improvement_pct": 0.04655327382440997,
+      "positive_year_share": 1.0,
+      "positive_region_year_share": 1.0
+    },
+    {
+      "horizon": 7,
+      "n_decisions": 1392,
+      "always_now_risk": 0.48294167915160274,
+      "model_rule_risk": 0.4527051378391608,
+      "climate_rule_risk": 0.47130094630545494,
+      "oracle_risk": 0.4367492368122891,
+      "model_improvement_pct": 0.06260909467486706,
+      "climate_improvement_pct": 0.02410380662650076,
+      "oracle_improvement_pct": 0.09564807581002575,
+      "oracle_capture_pct": 0.6545776707439463,
+      "direction_accuracy": 0.7298850574712644,
+      "mean_regret": 0.01595590102687161,
+      "delay_choice_rate": 0.5150862068965517,
+      "cluster_ci_low": 0.058283053568820846,
+      "cluster_ci_high": 0.06837724095582692,
+      "year_min_improvement_pct": 0.058283053568820846,
+      "year_max_improvement_pct": 0.06837724095582692,
+      "positive_year_share": 1.0,
+      "positive_region_year_share": 1.0
+    }
+  ],
+  "rolling_forecast_summary": [
+    {
+      "horizon": 3,
+      "test_years": 5,
+      "mean_skill_vs_persistence": 0.30480419618548366,
+      "min_skill_vs_persistence": 0.22165784993663784,
+      "positive_skill_year_share": 1.0,
+      "mean_decision_improvement_pct": 0.056159882872351054,
+      "min_decision_improvement_pct": 0.039560084572894665,
+      "max_decision_improvement_pct": 0.08988121099777867,
+      "positive_decision_year_share": 1.0,
+      "mean_oracle_capture_pct": 0.6082813158723779,
+      "mean_direction_accuracy": 0.7154166666666667
+    },
+    {
+      "horizon": 7,
+      "test_years": 5,
+      "mean_skill_vs_persistence": 0.39102979532402393,
+      "min_skill_vs_persistence": 0.26706413390142425,
+      "positive_skill_year_share": 1.0,
+      "mean_decision_improvement_pct": 0.07433053382814163,
+      "min_decision_improvement_pct": 0.05419089137556204,
+      "max_decision_improvement_pct": 0.12044935164835316,
+      "positive_decision_year_share": 1.0,
+      "mean_oracle_capture_pct": 0.64513634088535,
+      "mean_direction_accuracy": 0.7176724137931034
+    }
+  ],
+  "validation_corrections": [
+    {
+      "check": "확보 항차 수",
+      "documented": "6개(2020~2025)",
+      "observed": "5개(2020~2024)",
+      "status": "주의",
+      "interpretation": "원자료는 6개지만 ERA5 매칭 검증은 2020~2024의 5개 항차"
+    },
+    {
+      "check": "ERA5 매칭 행",
+      "documented": "2,450시간",
+      "observed": "2,528행 / 기온 유효쌍 2,450",
+      "status": "정정",
+      "interpretation": "2,450은 전체 매칭 행이 아니라 기온 유효쌍 수"
+    },
+    {
+      "check": "구간별 매칭 합계",
+      "documented": "추크치 1,372 + 동시베리아 1,250 = 2,622",
+      "observed": "추크치해 1,326, 동시베리아해 1,202",
+      "status": "정정",
+      "interpretation": "문서의 구간별 수치는 전체/유효쌍 기준이 섞였을 가능성"
+    },
+    {
+      "check": "기온 검증 연도 수",
+      "documented": "6개 항차 전부",
+      "observed": "5개 연도",
+      "status": "정정",
+      "interpretation": "2025는 ERA5 기간 밖이므로 기온 대조표에 없음"
+    }
+  ]
+}
