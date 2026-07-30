@@ -28,3 +28,6 @@ outputs/
 
 # 제출 패키지 (생성물)
 submission/dist/
+
+# 무관한 임베디드 저장소
+im-not-ai/

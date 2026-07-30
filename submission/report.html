@@ -1,0 +1,601 @@
+<meta charset="utf-8">
+<title>북극해항로 구간별 운항위험지수와 출항시점 의사결정</title>
+<style>
+:root{
+  --paper:#F6F7F5; --ink:#12202B; --ink-2:#3A4A55; --muted:#6B7A82;
+  --rule:#D3D9D8; --rule-2:#E6EAE9;
+  --deep:#14384A; --primary:#2E86AB; --warn:#C1440E;
+  --green:#3B7A57; --plum:#A23B72; --amber:#F18F01;
+  --surface:#FFFFFF; --tint:#EDF1F2;
+  --serif:"AppleMyungjo","Apple SD Gothic Neo",serif;
+  --sans:"Apple SD Gothic Neo","Helvetica Neue",sans-serif;
+  --mono:"SF Mono","Menlo",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-size:10.4pt;line-height:1.72;
+  font-feature-settings:"kern";
+  /* 한국어는 어절 단위로 끊어야 한다. 없으면 '구간/별'처럼 단어 중간에서 깨진다 */
+  word-break:keep-all;
+  overflow-wrap:break-word;
+}
+.page{max-width:186mm;margin:0 auto;padding:0 4mm}
+
+/* ---------- 표지 ---------- */
+.cover{min-height:252mm;display:flex;flex-direction:column;justify-content:space-between;padding:22mm 4mm 12mm;break-after:page}
+.eyebrow{font-family:var(--mono);font-size:8pt;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.cover h1{
+  font-family:var(--serif);font-weight:400;font-size:31pt;line-height:1.28;
+  margin:14mm 0 6mm;letter-spacing:-.012em;text-wrap:balance;color:var(--deep);
+}
+.cover .sub{font-family:var(--serif);font-size:13.5pt;line-height:1.62;color:var(--ink-2);max-width:150mm;text-wrap:balance}
+.thesis{
+  margin:14mm 0 0;padding:7mm 8mm;background:var(--surface);
+  border-left:2.5px solid var(--primary);
+  font-family:var(--serif);font-size:13pt;line-height:1.68;color:var(--deep);
+}
+.cover-meta{display:flex;gap:14mm;flex-wrap:wrap;padding-top:7mm;border-top:1px solid var(--rule);font-size:9.2pt}
+.cover-meta dt{font-family:var(--mono);font-size:7.6pt;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);margin-bottom:2mm}
+.cover-meta dd{margin:0;color:var(--ink)}
+
+/* ---------- 요약 수치 ---------- */
+.keyfigs{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:9mm 0;border-top:1.5px solid var(--ink);border-bottom:1px solid var(--rule)}
+.keyfig{padding:5mm 4mm 5mm 0;border-right:1px solid var(--rule-2)}
+.keyfig:last-child{border-right:0}
+.keyfig .n{font-family:var(--mono);font-size:19pt;line-height:1.1;color:var(--deep);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.keyfig .n .u{font-size:11pt;color:var(--muted);margin-left:1px}
+.keyfig .l{font-size:8.4pt;color:var(--ink-2);margin-top:2.5mm;line-height:1.5}
+
+/* ---------- 구조 ---------- */
+h2{
+  font-family:var(--serif);font-weight:400;font-size:19pt;line-height:1.34;
+  margin:0 0 3mm;color:var(--deep);letter-spacing:-.008em;text-wrap:balance;
+}
+h3{font-family:var(--sans);font-weight:600;font-size:11.4pt;margin:8mm 0 2.5mm;color:var(--ink);letter-spacing:-.005em}
+h4{font-family:var(--sans);font-weight:600;font-size:10pt;margin:6mm 0 2mm;color:var(--ink-2)}
+p{margin:0 0 3.2mm;max-width:158mm}
+strong{font-weight:600;color:var(--deep)}
+a{color:var(--primary)}
+
+section{margin:0 0 13mm}
+.sec-head{display:flex;align-items:baseline;gap:4mm;margin-bottom:5mm;margin-top:2mm;padding-bottom:2.5mm;border-bottom:1.5px solid var(--ink)}
+.sec-num{font-family:var(--mono);font-size:8.6pt;letter-spacing:.1em;color:var(--warn);flex-shrink:0;padding-top:1mm}
+
+/* 발견 블록 */
+.finding{background:var(--surface);border:1px solid var(--rule);padding:7mm 7mm 6mm;margin:0 0 5mm}
+.q{font-family:var(--serif);font-size:12.4pt;line-height:1.6;color:var(--muted);margin:0 0 3mm;padding-bottom:3mm;border-bottom:1px dotted var(--rule)}
+.q::before{content:"Q. ";font-family:var(--mono);font-size:9pt;color:var(--warn);letter-spacing:.05em}
+.a{font-family:var(--serif);font-size:13.6pt;line-height:1.58;color:var(--deep);margin:0;text-wrap:balance}
+
+/* 근거등급 */
+.grade{display:inline-flex;align-items:center;gap:2mm;font-family:var(--mono);font-size:7.8pt;letter-spacing:.08em;padding:1.4mm 3mm;border-radius:2px;margin-top:4mm}
+.g-a{background:#E4EEE8;color:#1F5138;border:1px solid #BCD5C7}
+.g-b{background:#E6EFF4;color:#1B4E67;border:1px solid #BFD6E2}
+.g-c{background:#FAECE4;color:#8A3410;border:1px solid #EBCDBC}
+.g-x{background:#EDEDEA;color:#5A5A55;border:1px solid #D6D6D1}
+.grade .dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+/* 그림 */
+figure{margin:6mm 0;break-inside:avoid-page}
+figure img{width:100%;display:block;border:1px solid var(--rule-2);background:#fff}
+figcaption{font-size:8.4pt;color:var(--muted);margin-top:2.5mm;line-height:1.55;max-width:158mm}
+figcaption b{color:var(--ink-2);font-weight:600}
+
+/* 표 */
+table{width:100%;border-collapse:collapse;margin:4mm 0;font-size:9.2pt;font-variant-numeric:tabular-nums}
+th{text-align:left;font-family:var(--mono);font-size:7.8pt;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:400;padding:2mm 3mm 2mm 0;border-bottom:1px solid var(--ink)}
+td{padding:2.2mm 3mm 2.2mm 0;border-bottom:1px solid var(--rule-2);vertical-align:top}
+td.num,th.num{text-align:right;word-break:normal;font-family:var(--mono);font-size:8.8pt;padding-right:4mm}
+/* 마지막 열일 때만 오른쪽 여백 제거. 중간 열에서 0으로 두면 옆 칸과 붙는다 */
+td.num:last-child,th.num:last-child{padding-right:0}
+tr.hi td{background:#FBF3EE;font-weight:600;color:var(--deep)}
+tr.hi td:first-child{box-shadow:inset 2.5px 0 0 var(--warn)}
+
+/* 인라인 막대 */
+.bars{margin:5mm 0}
+.bar-row{display:grid;grid-template-columns:38mm 1fr 20mm;align-items:center;gap:3mm;padding:1.6mm 0;font-size:9pt}
+.bar-track{height:11px;background:var(--tint);position:relative;border-radius:1px}
+.bar-fill{height:100%;border-radius:1px}
+.bar-val{font-family:var(--mono);font-size:8.6pt;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-2)}
+.bar-zero{position:absolute;top:-2px;bottom:-2px;width:1px;background:var(--ink-2);opacity:.45}
+
+/* 검증 매트릭스 */
+.vmatrix{display:grid;grid-template-columns:1fr auto;gap:0;margin:5mm 0;border-top:1.5px solid var(--ink)}
+.vrow{display:contents}
+.vrow>div{padding:2.6mm 0;border-bottom:1px solid var(--rule-2);font-size:9.2pt}
+.vstat{text-align:right;font-family:var(--mono);font-size:8.4pt;white-space:nowrap;padding-left:5mm!important}
+.ok{color:#1F5138}.no{color:var(--warn)}.pend{color:var(--muted)}
+
+/* 주의 박스 */
+.note{border-left:2.5px solid var(--rule);padding:3.5mm 0 3.5mm 5mm;margin:5mm 0;font-size:9.2pt;color:var(--ink-2);line-height:1.66}
+.note.warn{border-left-color:var(--warn)}
+.note .lab{font-family:var(--mono);font-size:7.6pt;letter-spacing:.1em;text-transform:uppercase;color:var(--warn);display:block;margin-bottom:1.5mm}
+.note.plain .lab{color:var(--muted)}
+
+.lede{font-family:var(--serif);font-size:11.6pt;line-height:1.7;color:var(--ink-2);max-width:156mm;margin-bottom:5mm}
+
+ul,ol{margin:0 0 3.5mm;padding-left:5mm;max-width:156mm}
+li{margin-bottom:1.6mm}
+code{font-family:var(--mono);font-size:8.8pt;background:var(--tint);padding:.5mm 1.5mm;border-radius:2px}
+
+.pagebreak{break-before:page}
+footer{margin-top:12mm;padding-top:4mm;border-top:1px solid var(--rule);font-size:8.2pt;color:var(--muted);line-height:1.6}
+
+@page{size:A4;margin:16mm 12mm 15mm}
+@media print{
+  body{background:#fff}
+  /* 쪼개지면 안 되는 단위만 지정. 섹션 전체에 걸면 한 쪽을 넘길 때 빈 페이지가 생긴다 */
+  .finding,figure,table,.note,.bars,.vmatrix,.keyfigs{break-inside:avoid}
+  h2,h3,h4,.sec-head{break-after:avoid}
+  tr{break-inside:avoid}
+  p{orphans:2;widows:2}
+}
+</style>
+
+<div class="page">
+
+<!-- ============ 표지 ============ -->
+<div class="cover">
+  <div>
+    <div class="eyebrow">2026 극지 빅데이터·인공지능 활용 경진대회 — 데이터 분석 부문</div>
+    <h1>북극해항로 구간별 운항위험지수와 출항시점 의사결정</h1>
+    <div class="sub">공개 해빙·기상 데이터와 국내 극지 관측자료를 결합한 검증 중심 접근</div>
+    <div class="thesis">
+      북극항로의 위험은 <strong>어디를 지나는가</strong>만이 아니라 <strong>언제 떠나는가</strong>로 갈린다.
+      본 연구는 그 차이를 정량화하고, 지수의 입력자료가 실제 관측과 일치하는지를
+      두 개의 독립 자료로 검증했다.
+    </div>
+  </div>
+
+  <div>
+    <div class="keyfigs">
+      <div class="keyfig"><div class="n">44<span class="u">%</span></div>
+        <div class="l">동시베리아해 항행가능일<br>카라해 대비</div></div>
+      <div class="keyfig"><div class="n">+16.1<span class="u">%</span></div>
+        <div class="l">10월 3일 연기 시<br>위험 증가</div></div>
+      <div class="keyfig"><div class="n">60.8<span class="u">%</span></div>
+        <div class="l">예측 기반 출항규칙의<br>이론 최대이득 달성률</div></div>
+      <div class="keyfig"><div class="n">0.36<span class="u">°C</span></div>
+        <div class="l">ERA5 기온의 선상관측<br>대비 MAD</div></div>
+    </div>
+
+    <dl class="cover-meta">
+      <div><dt>팀명</dt><dd>AURORA</dd></div>
+      <div><dt>대표자</dt><dd>정지훈</dd></div>
+      <div><dt>팀원</dt><dd>정지훈 · 이경원 · 여강록 · 서해준</dd></div>
+      <div><dt>활용 데이터</dt><dd>KPDC · NSIDC · ECMWF · EIA · CHNL</dd></div>
+    </dl>
+  </div>
+</div>
+
+<!-- ============ 1 ============ -->
+<section>
+  <div class="sec-head"><span class="sec-num">01</span><h2>항로 전체의 평균은 병목을 숨긴다</h2></div>
+
+  <p class="lede">북극 해빙이 줄면서 북극해항로(NSR)의 상업적 이용이 논의된다. 그러나 운항자가 마주하는 질문은
+  “북극이 얼마나 위험한가”가 아니라 “이 구간을 이 시점에 지날 때 무엇을 감수해야 하는가”이다.</p>
+
+  <div class="finding">
+    <p class="q">NSR을 하나의 항로로 보면 무엇을 놓치는가?</p>
+    <p class="a">항행 가능 기간은 4개 해역이 모두 늘었지만, <strong>동시베리아해는 카라해의 44%</strong>에 그친다.
+    완주 가능성은 평균이 아니라 최악 구간이 결정한다.</p>
+    <span class="grade g-a"><span class="dot"></span>A — 견고 · NSIDC 47년 관측</span>
+  </div>
+
+  <table>
+    <tr><th>해역</th><th class="num">추세</th><th class="num">최근5년 개빙&gt;50%</th><th class="num">개빙&gt;80%</th></tr>
+    <tr><td>카라해</td><td class="num">+2.30일/년</td><td class="num">121일</td><td class="num">80일</td></tr>
+    <tr><td>추크치해</td><td class="num">+2.52일/년</td><td class="num">93일</td><td class="num">31일</td></tr>
+    <tr><td>랍테프해</td><td class="num">+2.18일/년</td><td class="num">87일</td><td class="num">16일</td></tr>
+    <tr class="hi"><td>동시베리아해</td><td class="num">+1.73일/년</td><td class="num">53일</td><td class="num">10일</td></tr>
+  </table>
+
+  <p>4개 해역 모두 47년간 유의하게 증가했다(전부 p&lt;10⁻⁸). 그러나 <strong>증가했다는 사실보다 구간 간 격차가 중요하다.</strong>
+  개빙수역 80% 기준으로는 격차가 12.5%까지 벌어진다. 항로 전체를 단일 지표로 제시하는 접근은 이 병목을 은폐한다.</p>
+
+  <figure>
+    <img src="IMG_A">
+    <figcaption><b>그림 1.</b> 해역별 항행가능일수 47년 추세(좌)와 최근 5년 평균(우).
+    동시베리아해는 두 임계 기준 모두에서 최하위다.</figcaption>
+  </figure>
+
+  <div class="note plain"><span class="lab">정의</span>
+  항행가능일 = 개빙수역 비율(1 − 해빙면적/해역면적)이 임계값을 초과한 날.
+  NSIDC extent는 농도 15% 이상 격자의 면적 합이므로 “얼음이 없음”이 아니라 “15% 미만”을 뜻한다.
+  물리적 접근가능성 지표이며 운항허가·경제성과 다르다.</div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section>
+  <div class="sec-head"><span class="sec-num">02</span><h2>창은 두 배 넓어졌지만, 최적점은 그대로다</h2></div>
+
+  <div class="finding">
+    <p class="q">시즌이 길어졌으니 최적 출항시기도 늦춰졌는가?</p>
+    <p class="a">아니다. 개빙기는 카라해 기준 51일에서 121일로 늘었지만,
+    <strong>연중 최소빙일은 4개 해역 중 3개에서 유의한 이동이 없었다.</strong>
+    확장이 거의 전부 종료일 지연에서 왔기 때문이다.</p>
+    <span class="grade g-a"><span class="dot"></span>A — 견고 · 관측 단독, 모델 가정 없음</span>
+  </div>
+
+  <table>
+    <tr><th>해역</th><th class="num">개빙기 길이 79–83 → 21–25</th><th class="num">종료일 이동</th><th class="num">최소빙일 이동</th></tr>
+    <tr class="hi"><td>카라해</td><td class="num">51일 → 121일</td><td class="num">09-30 → 11-05</td><td class="num">−9.4일 *</td></tr>
+    <tr><td>추크치해</td><td class="num">34일 → 93일</td><td class="num">09-30 → 10-31</td><td class="num">+5.8일 n.s.</td></tr>
+    <tr><td>랍테프해</td><td class="num">22일 → 87일</td><td class="num">09-24 → 10-16</td><td class="num">−2.8일 n.s.</td></tr>
+    <tr><td>동시베리아해</td><td class="num">32일 → 53일</td><td class="num">10-01 → 10-10</td><td class="num">+2.8일 n.s.</td></tr>
+  </table>
+
+  <figure>
+    <img src="IMG_X">
+    <figcaption><b>그림 2.</b> 개빙기 시작·종료의 47년 이동(좌), 최소빙일의 초기·최근 비교(중),
+    최근 10년 최적일의 연간 변동(우). 시즌은 가을 쪽으로 늘어났으나 최적점은 9월 중순에 머물렀다.</figcaption>
+  </figure>
+
+  <h3>다만 매년 같은 날이 최적인 것은 아니다</h3>
+  <p>기후학적 최적기는 안정적이지만 <strong>개별 연도의 최적일은 크게 흔들린다.</strong>
+  이 변동성이 뒤에 나올 예측모델의 필요성으로 직접 연결된다.</p>
+
+  <div class="bars">
+    <div class="bar-row"><span>카라해</span>
+      <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--warn)"></div></div>
+      <span class="bar-val">16.0일</span></div>
+    <div class="bar-row"><span>랍테프해</span>
+      <div class="bar-track"><div class="bar-fill" style="width:82%;background:var(--plum)"></div></div>
+      <span class="bar-val">13.1일</span></div>
+    <div class="bar-row"><span>동시베리아해</span>
+      <div class="bar-track"><div class="bar-fill" style="width:51%;background:var(--amber)"></div></div>
+      <span class="bar-val">8.2일</span></div>
+    <div class="bar-row"><span>추크치해</span>
+      <div class="bar-track"><div class="bar-fill" style="width:21%;background:var(--green)"></div></div>
+      <span class="bar-val">3.3일</span></div>
+  </div>
+  <p style="font-size:8.6pt;color:var(--muted);margin-top:-1mm">최근 10년(2016–2025) 연중 최소빙일의 표준편차.
+  카라해는 10~90 퍼센타일이 8월 22일에서 9월 28일까지 한 달 이상 벌어진다.</p>
+</section>
+
+<!-- ============ 3 ============ -->
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><h2>출항연기는 안전조치가 아니다 — 시즌 후반에는</h2></div>
+
+  <p class="lede">출항 연기는 대표적인 안전조치로 통용된다. 2015~2024년 실측으로 3일 연기의 효과를
+  4,800개 쌍에 대해 계산했다.</p>
+
+  <div class="finding">
+    <p class="q">3일 연기하면 위험이 줄어드는가?</p>
+    <p class="a"><strong>평균과 중앙값의 부호가 반대다.</strong> 산술평균은 +7.2%로 악화를 가리키지만
+    중앙값은 −0.7%로 소폭 개선이다. 절반 남짓은 조금 나아지고, 드물게 크게 나빠진다.</p>
+    <span class="grade g-a"><span class="dot"></span>A — 견고 · 4,800개 쌍, 강건통계 일치</span>
+  </div>
+
+  <table>
+    <tr><th>통계</th><th class="num">전체 3일 연기</th><th>해석</th></tr>
+    <tr><td>산술평균</td><td class="num">+7.2%</td><td>꼬리에 끌려 올라감</td></tr>
+    <tr class="hi"><td>중앙값</td><td class="num">−0.7%</td><td>전형적인 경우는 소폭 개선</td></tr>
+    <tr><td>5–95% 윈저화 평균</td><td class="num">+4.1%</td><td>극단 제거 후에도 양수</td></tr>
+    <tr><td>평균 로그변화</td><td class="num">+0.3%</td><td>분모효과 보정</td></tr>
+    <tr><td>10–90 퍼센타일</td><td class="num">−30.8 ~ +47.3%</td><td>오른쪽 꼬리가 두꺼움</td></tr>
+  </table>
+
+  <div class="note warn"><span class="lab">보험 관점에서 결정적인 지점</span>
+  평균만 보면 대부분의 경우에 발생하는 소폭 개선을 놓치고, 중앙값만 보면 드물게 발생하는 큰 악화를 놓친다.
+  <strong>두 통계량을 함께 제시해야만 의사결정이 가능하다.</strong>
+  본 보고서는 +7.2%를 대표 효과크기로 사용하지 않는다.</div>
+
+  <h3>같은 3일 연기가 시점에 따라 정반대가 된다</h3>
+
+  <table>
+    <tr><th>월</th><th class="num">평균</th><th class="num">중앙값</th><th class="num">연도군집 95% 구간</th><th>판단</th></tr>
+    <tr><td>7월</td><td class="num">−1.3%</td><td class="num">−1.9%</td><td class="num">−2.2 ~ −0.4%</td><td>주장 불가 (부호 유지 74.3%)</td></tr>
+    <tr><td>8월</td><td class="num">+1.3%</td><td class="num">−3.9%</td><td class="num">−0.8 ~ +3.7%</td><td>불확실</td></tr>
+    <tr class="hi"><td>9월</td><td class="num">+14.0%</td><td class="num">+0.6%</td><td class="num">+10.0 ~ +18.3%</td><td>증가 방향 견고</td></tr>
+    <tr class="hi"><td>10월</td><td class="num">+16.1%</td><td class="num">+4.3%</td><td class="num">+12.0 ~ +20.6%</td><td>증가 방향 견고</td></tr>
+  </table>
+
+  <p>9월과 10월의 위험 증가는 <strong>세 종류의 불확실성 검정을 모두 통과</strong>했다.
+  가중치 1,000회 교란에서 부호 유지율 100%, 연도 군집 재표집 95% 구간이 전부 양수,
+  파고 결측을 다른 방식으로 대체해도 불변이다. 반면 7월의 감소 방향은 가중치 교란에서 74.3%만 유지되므로
+  결론으로 제시하지 않는다.</p>
+
+  <figure>
+    <img src="IMG_D">
+    <figcaption><b>그림 3.</b> 3일 연기 효과의 분포(좌)와 월별 방향(우).
+    분포가 오른쪽으로 두껍게 늘어져 평균과 중앙값이 갈린다. 시즌 후반으로 갈수록 연기의 손해가 커진다.</figcaption>
+  </figure>
+</section>
+
+<!-- ============ 4 ============ -->
+<section>
+  <div class="sec-head"><span class="sec-num">04</span><h2>예측 가능한 만큼만 알아도 결정은 나아진다</h2></div>
+
+  <p class="lede">앞의 결론은 미래를 안다는 전제 위에 있다. 실제 운항자는 모른 채 결정해야 한다.
+  그래서 물어야 할 질문은 “예측 오차를 감수하고도 위험이 줄어드는가”이다.</p>
+
+  <div class="finding">
+    <p class="q">달력만 보는 것과 예측하는 것은 다른 결과를 내는가?</p>
+    <p class="a">그렇다. 예측 규칙은 <strong>이론적 최대이득의 60.8%(3일)·64.5%(7일)</strong>를 실현한 반면,
+    달력 규칙은 6.5%·25.2%에 그쳤다. “항상 연기”는 아무것도 하지 않느니 못했다.</p>
+    <span class="grade g-b"><span class="dot"></span>B — 유망 · 5개 연도 롤링 외표본, 목표변수는 잠정 지수</span>
+  </div>
+
+  <h3>의사결정 규칙별 실현위험 (완전예지 대비 달성률)</h3>
+  <div class="bars">
+    <div class="bar-row"><span>항상 연기</span>
+      <div class="bar-track"><div class="bar-zero" style="left:12%"></div>
+        <div class="bar-fill" style="width:4.5%;background:var(--warn);margin-left:7.5%"></div></div>
+      <span class="bar-val">−7.9%</span></div>
+    <div class="bar-row"><span>기후값 규칙 (달력)</span>
+      <div class="bar-track"><div class="bar-zero" style="left:12%"></div>
+        <div class="bar-fill" style="width:5.7%;background:var(--amber);margin-left:12%"></div></div>
+      <span class="bar-val">+6.5%</span></div>
+    <div class="bar-row"><span>모델 규칙</span>
+      <div class="bar-track"><div class="bar-zero" style="left:12%"></div>
+        <div class="bar-fill" style="width:48.3%;background:var(--primary);margin-left:12%"></div></div>
+      <span class="bar-val">+54.9%</span></div>
+    <div class="bar-row"><span>완전예지 (상한)</span>
+      <div class="bar-track"><div class="bar-zero" style="left:12%"></div>
+        <div class="bar-fill" style="width:88%;background:var(--green);margin-left:12%"></div></div>
+      <span class="bar-val">100%</span></div>
+  </div>
+  <p style="font-size:8.6pt;color:var(--muted);margin-top:-1mm">3일 연기 판단 기준. 음수는 즉시 출항보다 나쁘다는 뜻이다.</p>
+
+  <h3>롤링 외표본 검증 — 5개 연도 전부 양수</h3>
+  <table>
+    <tr><th>예측거리</th><th class="num">지속성 대비 skill</th><th class="num">최악 연도</th><th class="num">실현위험 개선</th><th class="num">완전예지 달성률</th><th class="num">방향정확도</th></tr>
+    <tr class="hi"><td>3일</td><td class="num">0.305</td><td class="num">0.222</td><td class="num">5.6%</td><td class="num">60.8%</td><td class="num">71.5%</td></tr>
+    <tr class="hi"><td>7일</td><td class="num">0.391</td><td class="num">0.267</td><td class="num">7.4%</td><td class="num">64.5%</td><td class="num">71.8%</td></tr>
+  </table>
+
+  <p>2020~2024년을 한 해씩 완전히 미관측 연도로 두고 검증했다. 단기예측에서 이기기 어려운
+  <strong>지속성 베이스라인을 모든 평가연도에서 상회</strong>했다.</p>
+
+  <figure>
+    <img src="IMG_M">
+    <figcaption><b>그림 4.</b> 예측 성능(좌상), 검증기간 예측 정확도(우상),
+    의사결정 후향검증(좌하), 추크치해 2023 시즌 사례(우하).</figcaption>
+  </figure>
+
+  <div class="note warn"><span class="lab">말할 수 없는 것</span>
+  이 결과는 과거 재분석으로 미래 재분석을 예측한 <strong>이상화된 설정</strong>이다.
+  실제 운항에서는 수치예보를 입력으로 써야 하고 예보 자체의 오차가 추가된다.
+  따라서 “사고를 5.6% 줄인다”, “보험료를 낮춘다”, “ECMWF 예보보다 우수하다”는
+  어느 것도 주장할 수 없다.</div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section>
+  <div class="sec-head"><span class="sec-num">05</span><h2>이 지수를 믿어도 되는가</h2></div>
+
+  <p class="lede">가중합 위험지수는 만들기 쉽고 검증하기 어렵다. 본 연구는 검증 가능한 것과
+  불가능한 것을 분리하는 데 상당한 비중을 두었다. 위험지수는 ERA5로만 산출했고,
+  NSIDC와 KPDC 자료는 계산에 전혀 사용하지 않았다. 따라서 두 자료와의 대조는 순수한 외부검증이다.</p>
+
+  <div class="vmatrix">
+    <div class="vrow"><div><strong>해빙 입력자료</strong> — NSIDC 위성관측 대조</div><div class="vstat ok">✓ r = 0.905–0.954</div></div>
+    <div class="vrow"><div><strong>최적시점</strong> — NSIDC 최소빙일 대조</div><div class="vstat ok">✓ 평균 2.8일 차</div></div>
+    <div class="vrow"><div><strong>기온 입력자료</strong> — KPDC 아라온 선상 in-situ</div><div class="vstat ok">✓ MAD 0.36–0.50°C</div></div>
+    <div class="vrow"><div><strong>풍속 입력자료</strong> — KPDC 아라온 선상 in-situ</div><div class="vstat pend">△ 부분 (편의 +1~2 m/s)</div></div>
+    <div class="vrow"><div><strong>선박 행동</strong> — 연구선 GPS</div><div class="vstat no">✕ 실패 (구조적 교란)</div></div>
+    <div class="vrow"><div><strong>선박 행동</strong> — 화물선 AIS</div><div class="vstat no">✕ 미확보</div></div>
+    <div class="vrow"><div><strong>결합 가중치 · PRGI 손실증폭</strong></div><div class="vstat no">✕ 검증수단 없음</div></div>
+  </div>
+
+  <h3>국내 극지 관측자료로 재분석을 검증했다</h3>
+  <p>KPDC 승인 절차를 거쳐 아라온호 북극항해 6개 항차(2020~2025), 1초 간격 12,189시간을 확보했다.
+  아라온호는 척치해·동시베리아해를 실제 항행하는 국내 쇄빙연구선으로, 관측기간과 공간범위가
+  분석 대상과 직접 일치한다. ERA5 기간과 겹치는 5개 항차의 2,528시간을 대조했다.</p>
+
+  <table>
+    <tr><th>항차</th><th class="num">n</th><th class="num">Pearson r</th><th class="num">중앙값오차</th><th class="num">MAD</th></tr>
+    <tr><td>2020</td><td class="num">142</td><td class="num">0.233</td><td class="num">−0.05°C</td><td class="num">0.47</td></tr>
+    <tr><td>2021</td><td class="num">676</td><td class="num">0.580</td><td class="num">−0.38°C</td><td class="num">0.36</td></tr>
+    <tr class="hi"><td>2022</td><td class="num">590</td><td class="num">0.971</td><td class="num">−0.53°C</td><td class="num">0.50</td></tr>
+    <tr class="hi"><td>2023</td><td class="num">559</td><td class="num">0.968</td><td class="num">−0.22°C</td><td class="num">0.40</td></tr>
+    <tr class="hi"><td>2024</td><td class="num">483</td><td class="num">0.951</td><td class="num">−0.45°C</td><td class="num">0.45</td></tr>
+  </table>
+
+  <div class="note plain"><span class="lab">강건통계를 병기해야 하는 이유</span>
+  2020·2021년의 Pearson 상관이 낮은 것은 ERA5 오차가 아니라 선상 센서의 산발적 이상치 때문이다.
+  같은 해의 중앙값오차와 MAD는 다른 해와 동등하다.
+  <strong>Pearson 상관만 보고했다면 “ERA5가 부정확하다”는 정반대 결론에 도달했을 것이다.</strong></div>
+
+  <figure>
+    <img src="IMG_V">
+    <figcaption><b>그림 5.</b> 아라온 선상관측과 ERA5 대조(좌상), 변수·연도별 정합도(우상),
+    센서 결함 탐지(좌하), 선속 보정 효과(우하).</figcaption>
+  </figure>
+
+  <h3>검증은 양방향으로 작동한다</h3>
+  <p>ERA5와 대조하는 과정에서 <strong>아라온호 기압센서가 2023년부터 2025년까지 전량
+  <code>500.00</code>으로 고정 기록</strong>되고 있음을 확인했다. 관측이 재분석을 검증하는 동시에,
+  재분석이 관측장비의 이상을 드러냈다. 이 내용은 KPDC에 별도 회신할 예정이다.</p>
+
+  <table>
+    <tr><th>연도</th><th class="num">기압 유효율</th><th class="num">풍속 0값 비율</th><th>판정</th></tr>
+    <tr><td>2020–2022</td><td class="num">98.8–100%</td><td class="num">0.4–1.5%</td><td>정상</td></tr>
+    <tr class="hi"><td>2023</td><td class="num">1.6%</td><td class="num">13.6%</td><td>기압·풍속 이상</td></tr>
+    <tr class="hi"><td>2024</td><td class="num">0.0%</td><td class="num">19.1%</td><td>기압·풍속 이상</td></tr>
+    <tr class="hi"><td>2025</td><td class="num">0.0%</td><td class="num">0.0%</td><td>기압 결함, 풍속 회복</td></tr>
+  </table>
+</section>
+
+<!-- ============ 6 ============ -->
+<section>
+  <div class="sec-head"><span class="sec-num">06</span><h2>검증하지 못한 것</h2></div>
+
+  <p class="lede">본 연구가 확인한 것은 <strong>입력자료의 정확성</strong>과 <strong>결론의 방향성</strong>이다.
+  변수를 결합하는 방식이 옳은지는 확인하지 못했다. 그 경계를 명시한다.</p>
+
+  <h3>행동검증 시도와 실패</h3>
+  <p>화물선 AIS를 확보하지 못해 아라온호 GPS 항적으로 대체 검증을 시도했다.
+  핵심 검정은 “합성 위험지수가 해빙 단독보다 선박 감속을 잘 설명하는가”였다.</p>
+
+  <table>
+    <tr><th>지표</th><th class="num">결과</th><th>판정</th></tr>
+    <tr><td>합성지수 vs 선속 Spearman</td><td class="num">−0.034</td><td>무관 (p=0.212)</td></tr>
+    <tr><td>합성지수의 해빙 대비 ΔR²</td><td class="num">−0.0003</td><td>개선 없음</td></tr>
+    <tr><td>고위험 분위 감속 오즈비</td><td class="num">0.74</td><td>가설과 반대 방향</td></tr>
+  </table>
+
+  <p><strong>검증에 실패했고, 원인은 표본 부족이 아니라 구조적 교란이다.</strong>
+  얼음이 짙어질수록 배는 감속이 아니라 정지하며(정박 비율 개빙 30.0% → 밀집빙 59.3%),
+  연구선에게 그 정박은 관측임무 자체라 위험반응과 분리할 수 없다.
+  저온 계수는 위도 대리변수였고(위도·기온 상관 −0.888), 연도별 부호도 뒤집혔다.</p>
+
+  <div class="note warn"><span class="lab">근본 원인</span>
+  아라온호는 PC 고등급 쇄빙연구선이지 PC7 화물선이 아니다.
+  <strong>화물선이라면 회피할 조건에 임무상 의도적으로 진입한다.</strong>
+  회피행동을 관측할 수 없는 선박으로 회피행동을 검증하려 한 셈이다.
+  이 실패는 화물선 선단 AIS에 대체재가 없음을 실증한 결과이기도 하다.</div>
+
+  <h3>그렇다면 합성지수는 해빙지수의 재포장인가</h3>
+  <p>현재 지수에서 해빙은 평균 위험수준의 51.0%, 일별 변동의 81.7%를 차지한다.
+  추가가치는 행동자료 없이 검증할 수 없다. 그러나 <strong>“검증할 수 없다”와 “차이가 없다”는 다르다.</strong>
+  두 지수가 실제로 다른 결정을 내리는지는 계산할 수 있다.</p>
+
+  <table>
+    <tr><th>비교</th><th class="num">결과</th></tr>
+    <tr><td>값 상관 (Spearman)</td><td class="num">0.887</td></tr>
+    <tr><td>구간×월 위험순위 변동</td><td class="num">13 / 16 칸</td></tr>
+    <tr class="hi"><td>3일 출항결정 일치율</td><td class="num">57.5%</td></tr>
+    <tr class="hi"><td>7일 출항결정 일치율</td><td class="num">61.3%</td></tr>
+  </table>
+
+  <p><strong>약 40%의 출항 결정에서 다른 답이 나온다.</strong> 예측오차가 전혀 없는 완전예지 조건에서도
+  갈리므로 불일치는 잡음이 아니라 구조의 차이다. 다만 <strong>어느 쪽이 옳은지는 판정할 수 없다.</strong>
+  정답 라벨이 없고, 합성지수를 기준으로 평가하면 합성이 이기는 것이 당연해 순환논증이 된다.</p>
+
+  <h3>주요 한계</h3>
+  <ul>
+    <li><strong>본 지수는 POLARIS가 아니다.</strong> ERA5는 총 해빙농도만 제공하고 유형 구분이 없어 RIO 계산이 불가능하다. 임계값은 물리적으로 설명 가능한 잠정값이다.</li>
+    <li><strong>PRGI는 미검증 가정이다.</strong> 추크치해는 환경위험이 4개 구간 중 최저(0.335)임에도 PRGI가 45.4%를 증폭해 최종 2위가 된다. 이 순위는 실증 결론이 아니다.</li>
+    <li><strong>연간 위험추세는 통계적으로 불확실하다.</strong> 4개 구간 모두 OLS p=0.35~0.89이며 Theil-Sen 신뢰구간이 0을 포함한다.</li>
+    <li><strong>공간 집계 손실.</strong> 구간을 사각형 박스로 근사했다. 실제 항로선 기준이 아니다.</li>
+    <li><strong>가시거리 직접 관측 없음.</strong> ERA5 <code>visibility</code> 변수를 쓸 수 없어 이슬점차를 대리지표로 사용했다.</li>
+    <li><strong>통항 실적 결측.</strong> 9개 연도만 확보해 해빙–통항 관계는 통계적 결론이 아니라 사례 서술로만 제시했다.</li>
+  </ul>
+</section>
+
+<!-- ============ 7 ============ -->
+<section>
+  <div class="sec-head"><span class="sec-num">07</span><h2>결과 정리와 시사점</h2></div>
+
+  <h3>근거 수준별 결론</h3>
+  <table>
+    <tr><th>결론</th><th>근거 수준</th></tr>
+    <tr><td>동시베리아해가 물리적 항행가능성의 병목</td><td>A — 견고 (관측 사실)</td></tr>
+    <tr><td>개빙기 확장과 최소빙일 고정</td><td>A — 견고 (관측 사실)</td></tr>
+    <tr><td>연기 효과의 평균·중앙값 부호 불일치</td><td>A — 견고</td></tr>
+    <tr><td>9·10월 연기의 위험 증가 방향</td><td>A — 모델 내 견고 (3종 민감도 통과)</td></tr>
+    <tr><td>입력자료의 외부 관측 일치</td><td>A — 견고</td></tr>
+    <tr><td>합성 vs 해빙 결정 분기</td><td>A — 견고 (계산 사실)</td></tr>
+    <tr><td>예측 기반 출항규칙의 개선</td><td>B — 유망 (외표본, 목표변수는 잠정 지수)</td></tr>
+    <tr><td>4구간 공통 저위험 창 (9월 13–17일)</td><td>B — 모델 의존</td></tr>
+    <tr><td>추크치해 최종 위험순위</td><td>C — 가정 의존 (미검증 PRGI가 45.4% 증폭)</td></tr>
+    <tr><td>합성 vs 해빙의 우열</td><td>판단 불가 (정답 라벨 없음)</td></tr>
+    <tr><td>실제 사고율·보험료 절감</td><td>판단 불가</td></tr>
+  </table>
+
+  <div class="note plain"><span class="lab">등급의 의미</span>
+  “A — 모델 내 견고”는 현실의 사고위험이 검증되었다는 뜻이 아니다.
+  현재 지수 정의를 유지할 때 방향이 여러 민감도 분석에서 유지된다는 뜻이다.</div>
+
+  <h3>실무적 시사점</h3>
+  <p><strong>출항시점은 통제 가능한 결정이며 효과가 크다.</strong> 4구간 공통 저위험 창은 9월 13~17일,
+  4구간 평균 위험 최저일은 9월 15일이다. 다만 개별 연도의 최적일은 최대 16일 표준편차로 흩어지므로
+  평균 최적일은 계획의 출발점이지 결정 근거가 될 수 없다.</p>
+
+  <p><strong>시즌 후반의 연기는 안전조치가 아니다.</strong> 9~10월에는 결빙과 폭풍기 진입이 대기 이득을
+  압도한다. 이 방향은 가중치 선택과 무관하게 유지된다.</p>
+
+  <p><strong>안전조치 평가에는 평균과 중앙값이 모두 필요하다.</strong> 연기 효과 분포는 오른쪽 꼬리가 두껍다.
+  보험 언더라이팅 관점에서 평균만 보면 꼬리를 놓치고, 중앙값만 보면 “연기는 대체로 안전하다”는
+  잘못된 권고가 나온다.</p>
+
+  <h3>방법론적 시사점</h3>
+  <p><strong>강건통계를 병기해야 한다.</strong> Pearson 상관만 보았다면 ERA5가 부정확하다는 정반대 결론에
+  도달했을 사례를 실제로 만났다. <strong>검증은 양방향으로 작동한다.</strong> 관측으로 재분석을 검증하는
+  과정에서 관측장비의 결함을 발견했다. <strong>실패한 검증도 정보를 준다.</strong> 연구선으로 상선의
+  회피행동을 검증할 수 없다는 사실 자체가 화물선 AIS의 대체 불가능성을 실증했다.</p>
+
+  <h3>향후 과제</h3>
+  <table>
+    <tr><th class="num">순위</th><th>과제</th><th>이유</th></tr>
+    <tr class="hi"><td class="num">1</td><td>PAME ASTD 화물선 AIS 확보</td><td>합성지수 추가가치 검증의 유일한 경로. 대체재 없음이 실증됨</td></tr>
+    <tr><td class="num">2</td><td>SAR 거점 실제 출동능력 자료</td><td>PRGI가 구간 순위를 뒤집는데 미검증</td></tr>
+    <tr><td class="num">3</td><td>실제 항로 기하와 구간 도착시각 전파</td><td>완주항차는 구간별 통과시차가 존재</td></tr>
+    <tr><td class="num">4</td><td>CHNL 누락 6개 연도 통항 실적</td><td>표본을 15개 연도로 확대해야 통계 진술 가능</td></tr>
+    <tr><td class="num">5</td><td>POLARIS RIO 공식표 적용</td><td>현행 임계값을 공식 체계로 교체</td></tr>
+  </table>
+</section>
+
+<!-- ============ 부록 ============ -->
+<section class="pagebreak">
+  <div class="sec-head"><span class="sec-num">부록</span><h2>데이터와 방법</h2></div>
+
+  <h3>활용 데이터</h3>
+  <table>
+    <tr><th>데이터</th><th>출처</th><th>기간·규모</th><th>용도</th></tr>
+    <tr class="hi"><td>ARAON DaDiS 선상 기상관측</td><td>KPDC (극지연구소)</td><td>2020–2025년 6개 항차, 1초 간격, 12,189시간</td><td>ERA5 in-situ 검증</td></tr>
+    <tr><td>Sea Ice Index G02135 v4.0</td><td>NSIDC</td><td>1979–2025년 일별, 69,592 관측</td><td>장기 추세, 독립 검증</td></tr>
+    <tr><td>ERA5 single levels 재분석</td><td>ECMWF / Copernicus C3S</td><td>2015–2024년 7–10월, 4,920 관측</td><td>위험지수 입력변수</td></tr>
+    <tr><td>Brent·WTI 국제유가</td><td>EIA</td><td>2010–2025년 일별</td><td>통항량 배경 검토</td></tr>
+    <tr><td>NSR 통항 실적</td><td>CHNL</td><td>2011–2025년 중 9개 연도</td><td>해빙–통항 사례 검토</td></tr>
+  </table>
+
+  <h3>위험지수 구조</h3>
+  <p>사고 가능성과 사고 결과를 분리했다. 단일 가중합은 두 개념을 섞어 해석을 어렵게 만들기 때문이다.</p>
+  <p style="font-family:var(--mono);font-size:9pt;background:var(--tint);padding:4mm;line-height:1.9">
+  환경위험 P = Σ wᵢ · hᵢ &nbsp;&nbsp;(해빙, 풍속, 파고, 저온, 안개)<br>
+  손실증폭 S = 1 + λ · PRGI(최근접 SAR 거점 거리)<br>
+  고유위험 R = P × S</p>
+
+  <table>
+    <tr><th>성분</th><th class="num">위험 0</th><th class="num">위험 1</th><th>근거</th></tr>
+    <tr><td>해빙농도</td><td class="num">0.10</td><td class="num">0.80</td><td>10% 미만 개빙수역 / 80% 초과 밀집빙</td></tr>
+    <tr><td>풍속</td><td class="num">5 m/s</td><td class="num">20 m/s</td><td>Beaufort 8 강풍</td></tr>
+    <tr><td>파고</td><td class="num">1 m</td><td class="num">5 m</td><td>황천, 조종성·구조가능성 저하</td></tr>
+    <tr><td>기온</td><td class="num">0°C</td><td class="num">−20°C</td><td>갑판 착빙·장비 고장</td></tr>
+    <tr><td>이슬점차</td><td class="num">3 K</td><td class="num">0.5 K</td><td>안개 고확률 (가시거리 대체지표)</td></tr>
+  </table>
+
+  <h3>ARAON 자료 품질관리 4계층</h3>
+  <p>각 단계는 사전 설계가 아니라 <strong>실제 오류를 발견한 뒤</strong> 도입했다.</p>
+  <ol>
+    <li><strong>값 단위 물리범위 필터</strong> — 기온 최대 115,645°C 등 명백한 오류</li>
+    <li><strong>파일 단위 불량률 게이트(20%)</strong> — 원자료의 85~99%가 범위 밖인 시간대가 존재했고 잔존값 중앙값이 북위 73도 8월에 36°C였다</li>
+    <li><strong>기록 완결성 필터(≥3,000초/시간)</strong> — 512초만 기록된 파일에서 −39.02°C 고정값</li>
+    <li><strong>강건통계 병기</strong> — Pearson은 소수 이상치에 취약하므로 중앙값오차·MAD·Spearman 병행</li>
+  </ol>
+
+  <h3>강건성 검정</h3>
+  <ul>
+    <li><strong>가중치 교란</strong> — Dirichlet 1,000회 재표집으로 순위 안정성과 부호 유지율 산출</li>
+    <li><strong>연도 군집 재표집</strong> — 일별 관측을 독립표본으로 보지 않고 연도 단위 부트스트랩</li>
+    <li><strong>결측 대체 민감도</strong> — 파고 결측 40일(전부 10월, 결빙 추정)을 0 m 또는 구간×월 중앙값으로 대체</li>
+  </ul>
+
+  <h3>예측모델</h3>
+  <p>Histogram-based Gradient Boosting. 특징은 현재값, 지연값(1·3·7일), 3일 변화율, 7일 이동평균,
+  연중일자 삼각함수, 목표시점 기후값이다. 분할은 시간순이며 기후값은 학습기간만으로 산출해
+  검증기간 정보 누설을 차단했다.</p>
+
+  <h3>데이터 인용</h3>
+  <p style="font-size:9pt;color:var(--ink-2)">The data (KOPRI-KPDC-00001463, 00001704, 00002146, 00002359, 00002855, 00002994)
+  used in this work was provided by the Korea Polar Research Institute.</p>
+  <ul style="font-size:9pt;color:var(--ink-2)">
+    <li>NSIDC Sea Ice Index, Version 4 (G02135), National Snow and Ice Data Center</li>
+    <li>ERA5 hourly data on single levels, Copernicus Climate Change Service (C3S) Climate Data Store</li>
+    <li>U.S. Energy Information Administration, Petroleum Spot Prices (RBRTE, RWTC)</li>
+    <li>Center for High North Logistics (CHNL), NSR transit statistics</li>
+  </ul>
+
+  <footer>
+    <strong>AURORA</strong> · 정지훈 · 이경원 · 여강록 · 서해준<br>
+    2026 극지 빅데이터·인공지능 활용 경진대회 — 데이터 분석 부문<br>
+    분석 코드 전체와 산출 데이터를 제출물에 함께 포함하였다.
+  </footer>
+</section>
+
+</div>
