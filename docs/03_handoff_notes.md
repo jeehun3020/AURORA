@@ -1,5 +1,9 @@
 # AURORA 프로젝트 — 인수인계 노트
 
+> **문서 지위**: 작업 이력 기록. 데이터 현황·다음 단계는 이후 크게 변경됐으므로
+> 현재 정본은 [07_competition_submission_master.md](07_competition_submission_master.md),
+> 분석 결과는 [04_analysis_findings.md](04_analysis_findings.md)를 본다.
+>
 > 이 문서는 팀 내부 작업 히스토리를 공유하기 위한 노트입니다. API 키 등 민감정보는 제거되어 있으며,
 > 각자 로컬 환경변수/`~/.cdsapirc`로 개별 발급받아 설정해야 합니다 (아래 §4 참고).
 
@@ -63,9 +67,9 @@ CHNL(`https://chnl.no/`)에서 해당 연도를 다시 수기 수집해야 합�
 ### 3.2 진행 중
 | 데이터 | 상태 | 비고 |
 |---|---|---|
-| ERA5 기상/해양 데이터 | ✅ 다운로드 스크립트(`nsr_analysis/05_era5_download.py`) 검증 완료, CDS ToU 동의 완료, 전체 다운로드(2015~2024, 4개 해역) 진행 중 |
+| ERA5 기상/해양 데이터 | ✅ 완료 (2015~2024, 4개 해역, 160개 파일) |
 | 국제유가 (EIA) | ✅ 스크립트(`nsr_analysis/04_eia_oil_price.py`) 로컬 실행 검증 완료 (WTI 4017행, Brent 4049행, 2010~2025) |
-| PAME ASTD (AIS 데이터) | 🔄 신청 완료, 승인 대기 중 (7일 이의제기 기간). Level 3 무료(13종 선종). MVP는 이것 없이도 완성되도록 설계됨 |
+| PAME ASTD (AIS 데이터) | ❌ **금회 대회 기간 내 승인 무산 확정.** 대체 검증(ARAON GPS)도 연구선 임무 교란으로 실패 — [04 §검증4](04_analysis_findings.md) 참고 |
 
 ### 3.3 시도했으나 부적합 판정
 | 데이터 | 사유 |
@@ -85,7 +89,11 @@ CHNL(`https://chnl.no/`)에서 해당 연도를 다시 수기 수집해야 합�
 - **공공데이터포털 서비스키**: 기상청 해양기상관측자료 조회서비스용이나 §3.3 참고 — 공공기관 전용 명시되어 있어 학생팀 승인 불확실, 현재 미사용
 
 ## 4. 작성된 코드 (전부 `nsr_analysis/` 폴더)
-1. `01_transit_trend_analysis.py` — **TODO, 아직 미작성.** NSR 통항 시계열 분석·시각화 (비단조성 확인, `nsr_transit_trend.png` 생성 예정)
+
+> ⚠️ 아래 목록은 작성 시점 기준이며 **현재와 다르다.** 실제 스크립트는 04~24번까지 존재하고
+> 01~03번은 다른 방식으로 대체됐다. 현행 목록은 [README](../README.md#코드-구조-nsr_analysis)를 본다.
+
+1. `01_transit_trend_analysis.py` — 미작성. 09번이 대체. NSR 통항 시계열 분석·시각화 (비단조성 확인, `nsr_transit_trend.png` 생성 예정)
 2. `02_risk_score_prototype.py` — **TODO, 아직 미작성.** P×S 잔여위험/할증계수 계산 스켈레톤
 3. `03_weather_pipeline.py` — **TODO, 아직 미작성.** 기상데이터 전처리·결측보간·파생변수 파이프라인
 4. `04_eia_oil_price.py` — ✅ EIA API 연동 (WTI/Brent), 로컬 실행 검증 완료
@@ -128,7 +136,7 @@ CHNL(`https://chnl.no/`)에서 해당 연도를 다시 수기 수집해야 합�
 4. `02_risk_score_prototype.py`의 placeholder 가중치를 POLARIS RIO 공식표(IMO MSC.1/Circ.1519) 및 문헌 기반으로 교체
 5. PRGI용 구조기지·피난항 위치 데이터 수집 (좌표 목록 필요)
 6. NSR 통항 데이터 누락 연도(2014·2017·2019~2022) CHNL에서 재수집
-7. ~~PAME ASTD 신청서 제출 여부 확인/실행~~ ✅ 제출 완료, 승인 대기
+7. ~~PAME ASTD 신청서 제출~~ ❌ 제출했으나 금회 승인 무산
 8. 발표자료(pptx) AURORA 버전으로 갱신
 9. 분석보고서 초안 작성 (배경/데이터/방법/내용/결과 — §1, §2 원칙 반영)
 
