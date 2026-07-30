@@ -7,16 +7,18 @@
   --deep:#14384A; --primary:#2E86AB; --warn:#C1440E;
   --green:#3B7A57; --plum:#A23B72; --amber:#F18F01;
   --surface:#FFFFFF; --tint:#EDF1F2;
-  --serif:"AppleMyungjo","Apple SD Gothic Neo",serif;
-  --sans:"Apple SD Gothic Neo","Helvetica Neue",sans-serif;
+  /* Pretendard 단일 가족 + 굵기로 위계. SF Mono는 한글이 없어 순수 숫자에만 쓴다 */
+  --serif:"Pretendard","Apple SD Gothic Neo",sans-serif;
+  --sans:"Pretendard","Apple SD Gothic Neo",sans-serif;
   --mono:"SF Mono","Menlo",monospace;
+  --label:"Pretendard","Apple SD Gothic Neo",sans-serif;
 }
 *{box-sizing:border-box}
 html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 body{
   margin:0;background:var(--paper);color:var(--ink);
-  font-family:var(--sans);font-size:9.2pt;line-height:1.56;
-  font-feature-settings:"kern";
+  font-family:var(--sans);font-size:9.4pt;font-weight:400;line-height:1.62;
+  font-feature-settings:"kern";font-variant-numeric:tabular-nums;
   /* 한국어는 어절 단위로 끊어야 한다. 없으면 '구간/별'처럼 단어 중간에서 깨진다 */
   word-break:keep-all;
   overflow-wrap:break-word;
@@ -25,38 +27,38 @@ body{
 
 /* ---------- 표지 ---------- */
 .cover{min-height:252mm;display:flex;flex-direction:column;justify-content:space-between;padding:22mm 4mm 12mm;break-after:page}
-.eyebrow{font-family:var(--mono);font-size:8pt;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.eyebrow{font-family:var(--label);font-weight:600;font-size:8pt;letter-spacing:.1em;color:var(--muted)}
 .cover h1{
-  font-family:var(--serif);font-weight:400;font-size:31pt;line-height:1.28;
-  margin:14mm 0 6mm;letter-spacing:-.012em;text-wrap:balance;color:var(--deep);
+  font-family:var(--serif);font-weight:700;font-size:33pt;line-height:1.22;
+  margin:14mm 0 6mm;letter-spacing:-.035em;text-wrap:balance;color:var(--deep);
 }
-.cover .sub{font-family:var(--serif);font-size:13.5pt;line-height:1.62;color:var(--ink-2);max-width:150mm;text-wrap:balance}
+.cover .sub{font-family:var(--serif);font-weight:300;font-size:13.5pt;line-height:1.55;color:var(--ink-2);max-width:150mm;text-wrap:balance;letter-spacing:-.015em}
 .thesis{
   margin:14mm 0 0;padding:7mm 8mm;background:var(--surface);
   border-left:2.5px solid var(--primary);
-  font-family:var(--serif);font-size:13pt;line-height:1.68;color:var(--deep);
+  font-family:var(--serif);font-weight:400;font-size:12pt;line-height:1.62;color:var(--deep);letter-spacing:-.015em;
 }
 .cover-meta{display:flex;gap:14mm;flex-wrap:wrap;padding-top:7mm;border-top:1px solid var(--rule);font-size:9.2pt}
-.cover-meta dt{font-family:var(--mono);font-size:7.6pt;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);margin-bottom:2mm}
+.cover-meta dt{font-family:var(--label);font-weight:600;font-size:7.4pt;letter-spacing:.08em;color:var(--muted);margin-bottom:2mm}
 .cover-meta dd{margin:0;color:var(--ink)}
 
 /* ---------- 요약 수치 ---------- */
 .keyfigs{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:9mm 0;border-top:1.5px solid var(--ink);border-bottom:1px solid var(--rule)}
 .keyfig{padding:5mm 4mm 5mm 0;border-right:1px solid var(--rule-2)}
 .keyfig:last-child{border-right:0}
-.keyfig .n{font-family:var(--mono);font-size:19pt;line-height:1.1;color:var(--deep);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-.keyfig .n .u{font-size:11pt;color:var(--muted);margin-left:1px}
+.keyfig .n{font-family:var(--serif);font-weight:700;font-size:21pt;line-height:1.05;color:var(--deep);font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+.keyfig .n .u{font-size:11pt;font-weight:600;color:var(--muted);margin-left:1px}
 .keyfig .l{font-size:8.4pt;color:var(--ink-2);margin-top:2.5mm;line-height:1.5}
 
 /* ---------- 구조 ---------- */
 h2{
-  font-family:var(--serif);font-weight:400;font-size:17pt;line-height:1.3;
-  margin:0 0 2mm;color:var(--deep);letter-spacing:-.008em;text-wrap:balance;
+  font-family:var(--serif);font-weight:700;font-size:17.5pt;line-height:1.26;
+  margin:0 0 2mm;color:var(--deep);letter-spacing:-.032em;text-wrap:balance;
 }
-h3{font-family:var(--sans);font-weight:600;font-size:10.2pt;margin:4.2mm 0 1.8mm;color:var(--ink);letter-spacing:-.005em}
+h3{font-family:var(--sans);font-weight:600;font-size:10.4pt;margin:4.2mm 0 1.8mm;color:var(--ink);letter-spacing:-.022em}
 h4{font-family:var(--sans);font-weight:600;font-size:10pt;margin:6mm 0 2mm;color:var(--ink-2)}
 p{margin:0 0 2.3mm;max-width:158mm}
-strong{font-weight:600;color:var(--deep)}
+strong{font-weight:700;color:var(--deep)}
 a{color:var(--primary)}
 
 section{margin:0 0 6mm}
@@ -64,16 +66,16 @@ section{margin:0 0 6mm}
 section{break-before:page}
 section:first-of-type{break-before:auto}
 .sec-head{display:flex;align-items:baseline;gap:4mm;margin-bottom:4mm;margin-top:0;padding-bottom:2mm;border-bottom:1.5px solid var(--ink)}
-.sec-num{font-family:var(--mono);font-size:8.6pt;letter-spacing:.1em;color:var(--warn);flex-shrink:0;padding-top:1mm}
+.sec-num{font-family:var(--mono);font-weight:600;font-size:9pt;letter-spacing:0;color:var(--warn);flex-shrink:0;padding-top:1.5mm}
 
 /* 발견 블록 */
 .finding{background:var(--surface);border:1px solid var(--rule);padding:5mm 5.5mm 4.5mm;margin:0 0 4mm}
-.q{font-family:var(--serif);font-size:11.2pt;line-height:1.5;color:var(--muted);margin:0 0 3mm;padding-bottom:3mm;border-bottom:1px dotted var(--rule)}
-.q::before{content:"Q. ";font-family:var(--mono);font-size:9pt;color:var(--warn);letter-spacing:.05em}
-.a{font-family:var(--serif);font-size:12.2pt;line-height:1.5;color:var(--deep);margin:0;text-wrap:balance}
+.q{font-family:var(--serif);font-weight:400;font-size:10.6pt;line-height:1.5;color:var(--muted);margin:0 0 3mm;padding-bottom:3mm;border-bottom:1px dotted var(--rule);letter-spacing:-.015em}
+.q::before{content:"Q.";font-family:var(--mono);font-weight:600;font-size:8.6pt;color:var(--warn);letter-spacing:.02em;margin-right:2mm}
+.a{font-family:var(--serif);font-weight:600;font-size:12.4pt;line-height:1.48;color:var(--deep);margin:0;text-wrap:balance;letter-spacing:-.028em}
 
 /* 근거등급 */
-.grade{display:inline-flex;align-items:center;gap:2mm;font-family:var(--mono);font-size:7.8pt;letter-spacing:.08em;padding:1.4mm 3mm;border-radius:2px;margin-top:4mm}
+.grade{display:inline-flex;align-items:center;gap:2mm;font-family:var(--label);font-weight:600;font-size:7.8pt;letter-spacing:.01em;padding:1.4mm 3mm;border-radius:2px;margin-top:4mm}
 .g-a{background:#E4EEE8;color:#1F5138;border:1px solid #BCD5C7}
 .g-b{background:#E6EFF4;color:#1B4E67;border:1px solid #BFD6E2}
 .g-c{background:#FAECE4;color:#8A3410;border:1px solid #EBCDBC}
@@ -89,7 +91,7 @@ figcaption b{color:var(--ink-2);font-weight:600}
 
 /* 표 */
 table{width:100%;border-collapse:collapse;margin:2.6mm 0;font-size:8.3pt;font-variant-numeric:tabular-nums}
-th{text-align:left;font-family:var(--mono);font-size:7.4pt;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:400;padding:1.6mm 3mm 1.6mm 0;border-bottom:1px solid var(--ink)}
+th{text-align:left;font-family:var(--label);font-size:7.8pt;letter-spacing:.02em;color:var(--muted);font-weight:600;padding:1.6mm 3mm 1.6mm 0;border-bottom:1px solid var(--ink)}
 td{padding:1.45mm 3mm 1.45mm 0;border-bottom:1px solid var(--rule-2);vertical-align:top}
 td.num,th.num{text-align:right;word-break:normal;font-family:var(--mono);font-size:8.8pt;padding-right:4mm}
 /* 마지막 열일 때만 오른쪽 여백 제거. 중간 열에서 0으로 두면 옆 칸과 붙는다 */
@@ -102,23 +104,23 @@ tr.hi td:first-child{box-shadow:inset 2.5px 0 0 var(--warn)}
 .bar-row{display:grid;grid-template-columns:38mm 1fr 20mm;align-items:center;gap:3mm;padding:1.6mm 0;font-size:9pt}
 .bar-track{height:11px;background:var(--tint);position:relative;border-radius:1px}
 .bar-fill{height:100%;border-radius:1px}
-.bar-val{font-family:var(--mono);font-size:8.6pt;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-2)}
+.bar-val{font-variant-numeric:tabular-nums;font-size:8.6pt;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-2)}
 .bar-zero{position:absolute;top:-2px;bottom:-2px;width:1px;background:var(--ink-2);opacity:.45}
 
 /* 검증 매트릭스 */
 .vmatrix{display:grid;grid-template-columns:1fr auto;gap:0;margin:5mm 0;border-top:1.5px solid var(--ink)}
 .vrow{display:contents}
 .vrow>div{padding:2.6mm 0;border-bottom:1px solid var(--rule-2);font-size:9.2pt}
-.vstat{text-align:right;font-family:var(--mono);font-size:8.4pt;white-space:nowrap;padding-left:5mm!important}
+.vstat{text-align:right;font-variant-numeric:tabular-nums;font-size:8.4pt;white-space:nowrap;padding-left:5mm!important}
 .ok{color:#1F5138}.no{color:var(--warn)}.pend{color:var(--muted)}
 
 /* 주의 박스 */
 .note{border-left:2.5px solid var(--rule);padding:2.6mm 0 2.6mm 4.5mm;margin:3.4mm 0;font-size:8.7pt;color:var(--ink-2);line-height:1.6}
 .note.warn{border-left-color:var(--warn)}
-.note .lab{font-family:var(--mono);font-size:7.6pt;letter-spacing:.1em;text-transform:uppercase;color:var(--warn);display:block;margin-bottom:1.5mm}
+.note .lab{font-family:var(--label);font-weight:700;font-size:7.4pt;letter-spacing:.04em;color:var(--warn);display:block;margin-bottom:1.5mm}
 .note.plain .lab{color:var(--muted)}
 
-.lede{font-family:var(--serif);font-size:10pt;line-height:1.56;color:var(--ink-2);max-width:156mm;margin-bottom:4.5mm}
+.lede{font-family:var(--serif);font-weight:300;font-size:10.8pt;line-height:1.62;color:var(--ink-2);max-width:156mm;margin-bottom:4.5mm;letter-spacing:-.018em}
 
 ul,ol{margin:0 0 3.5mm;padding-left:5mm;max-width:156mm}
 li{margin-bottom:1.2mm}
